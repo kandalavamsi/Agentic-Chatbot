@@ -1,6 +1,8 @@
 import streamlit as st
 import os
 from src.langgrapghagenticai.ui.uiconfigfile import Config
+from src.langgrapghagenticai.ui.streamlitui.display_result import init_history, clear_history, render_count
+from src.langgrapghagenticai.ui.streamlitui.styles import apply_styles, render_header
 
 class LoadStreamlitUI:
     def __init__(self):
@@ -10,9 +12,12 @@ class LoadStreamlitUI:
     def load_streamlit_ui(self):
         st.set_page_config(
             page_title=self.config.get_page_title(),
+            page_icon="🤖",
             layout="wide"
         )
-        st.header(self.config.get_page_title())
+        apply_styles()
+        render_header(self.config.get_page_title())
+        init_history()
 
         with st.sidebar:
             st.title("Settings")
@@ -66,5 +71,12 @@ class LoadStreamlitUI:
             usecase_options = self.config.get_usecase_options()
             selected_usecase = st.selectbox("Select Use Case", usecase_options)
             self.user_controls["selected_usecase"] = selected_usecase
+
+            st.divider()
+            if st.button("🗑️ Clear chat"):
+                clear_history()
+            count_slot = st.empty()
+            render_count(count_slot)
+            self.user_controls["count_slot"] = count_slot
 
         return self.user_controls
